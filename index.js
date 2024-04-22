@@ -1,17 +1,50 @@
-var express = require('express');
-var cors = require('cors');
-require('dotenv').config()
+require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const multer = require("multer");
+const fs = require("fs");
 
-var app = express();
+const app = express();
+const upload = multer({
+  dest: "./uploads/",
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 app.use(cors());
-app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', function (req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/index.html");
+});
+
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const { originalname, mimetype, size } = req.file;
+  const fileInfo = { name: originalname, type: mimetype, size };
+
+  fs.unlink(req.file.path, (err) => {
+    if (err) {
+      console.error("Error deleting uploaded file:", err);
+    }
+  });
+
+  res.json(fileInfo);
+});
+
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+    res.status(400).json({ error: "The file is larger than 5MB" });
+  } else {
+    next(err);
+  }
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, function () {
-  console.log('Your app is listening on port ' + port)
+app.listen(port, () => {
+  console.log("Server is running on port " + port);
 });
