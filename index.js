@@ -8,11 +8,11 @@ const fs = require("fs");
 const app = express();
 const upload = multer({
   storage: multer.memoryStorage(),
+  limits: { fileSize: 4 * 1024 * 1024 },
 });
 
 app.use(cors());
 app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
@@ -28,6 +28,8 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
 
   res.json(fileInfo);
 });
+
+app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
