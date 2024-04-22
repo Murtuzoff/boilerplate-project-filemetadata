@@ -24,18 +24,14 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
+  if (req.file.size > 4 * 1024 * 1024) {
+    return res.status(400).json({ error: "The file is larger than 4MB" });
+  }
+
   const { originalname, mimetype, size } = req.file;
   const fileInfo = { name: originalname, type: mimetype, size };
 
   res.json(fileInfo);
-});
-
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-    res.status(400).json({ error: "The file is larger than 4MB" });
-  } else {
-    next(err);
-  }
 });
 
 const port = process.env.PORT || 3000;
