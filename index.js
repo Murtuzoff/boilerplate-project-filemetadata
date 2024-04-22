@@ -34,6 +34,14 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
   res.json(fileInfo);
 });
 
+app.use(function (err, req, res, next) {
+  if (err instanceof bodyParser.errors.PayloadTooLargeError) {
+    res.status(413).send("The request is too large");
+  } else {
+    next(err);
+  }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("Server is running on port " + port);
