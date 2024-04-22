@@ -8,7 +8,7 @@ const fs = require("fs");
 const app = express();
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 4 * 1024 * 1024 },
 });
 
 app.use(cors());
@@ -32,7 +32,7 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
 
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-    res.status(400).json({ error: "The file is larger than 5MB" });
+    res.status(400).json({ error: "The file is larger than 4MB" });
   } else {
     next(err);
   }
