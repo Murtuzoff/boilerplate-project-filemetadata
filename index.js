@@ -8,15 +8,7 @@ const fs = require("fs");
 const app = express();
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 4 * 1024 * 1024 },
 });
-
-const fileSizeLimit = (req, res, next) => {
-  if (req.file && req.file.size > 4 * 1024 * 1024) {
-    return res.status(400).json({ error: "The file is larger than 4MB" });
-  }
-  next();
-};
 
 app.use(cors());
 app.use(express.static(__dirname + "/public"));
@@ -26,21 +18,16 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-app.post(
-  "/api/fileanalyse",
-  fileSizeLimit,
-  upload.single("upfile"),
-  (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
-    const { originalname, mimetype, size } = req.file;
-    const fileInfo = { name: originalname, type: mimetype, size };
-
-    res.json(fileInfo);
+app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
   }
-);
+
+  const { originalname, mimetype, size } = req.file;
+  const fileInfo = { name: originalname, type: mimetype, size };
+
+  res.json(fileInfo);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
