@@ -45,14 +45,12 @@
   <script>
     const inputfield = document.getElementById("inputfield");
 
-    inputfield.addEventListener("change", function (event) {
-      const file = event.target.files[0];
+    inputfield.addEventListener("change", (e) => {
+      const file = e.target.files[0];
       const maxSize = 4 * 1024 * 1024;
 
       if (file.size > maxSize) {
-        alert(
-          "Файл слишком большой. Пожалуйста, выберите файл размером до 4 МБ."
-        );
+        alert("The file is too big. Please select a file up to 4 MB in size.");
         inputfield.value = "";
       }
     });
