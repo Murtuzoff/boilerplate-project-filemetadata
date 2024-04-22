@@ -1,14 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require("multer");
-const fs = require("fs");
 
 const app = express();
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 4 * 1024 * 1024 },
 });
 
 app.use(cors());
@@ -28,8 +25,6 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
 
   res.json(fileInfo);
 });
-
-app.use(bodyParser.urlencoded({ extended: false }));
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
