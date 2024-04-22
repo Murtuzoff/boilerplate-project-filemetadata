@@ -7,7 +7,7 @@ const fs = require("fs");
 
 const app = express();
 const upload = multer({
-  dest: "./uploads/",
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
