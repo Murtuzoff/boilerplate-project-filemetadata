@@ -27,12 +27,6 @@ app.post("/api/fileanalyse", upload.single("upfile"), (req, res) => {
   const { originalname, mimetype, size } = req.file;
   const fileInfo = { name: originalname, type: mimetype, size };
 
-  fs.unlink(req.file.path, (err) => {
-    if (err) {
-      console.error("Error deleting uploaded file:", err);
-    }
-  });
-
   res.json(fileInfo);
 });
 
